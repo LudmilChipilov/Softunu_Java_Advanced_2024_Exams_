@@ -1,0 +1,99 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+        //sum the last strength and the first accuracy
+        List<Integer> strengths_List = Arrays.stream(scanner.nextLine().split(" "))
+                .map(Integer::parseInt).toList();
+
+        List<Integer> accuracies_List =  Arrays.stream(scanner.nextLine().split(" "))
+                .map(Integer::parseInt).toList();
+        LinkedList<Integer> strengths = modifyArrayListToLinkedList(strengths_List);
+        LinkedList<Integer> accuracies = modifyArrayListToLinkedList(accuracies_List);
+        int countGoal = 0;
+
+        while(!strengths.isEmpty() && !accuracies.isEmpty()) {
+            int sum = strengths.getLast() + accuracies.getFirst();
+            if(sum == 100) {
+                strengths.removeLast();
+                accuracies.removeFirst();
+                countGoal++;
+            }
+            else if(sum < 100){
+                if(strengths.getLast() < accuracies.getFirst())
+                {
+                    strengths.removeLast();
+                }
+                else if(strengths.getLast() > accuracies.getFirst())
+                {
+                    accuracies.removeFirst();
+                }
+                else
+                {
+                    strengths.removeLast();
+                    strengths.addLast(sum);
+                    accuracies.removeFirst();
+                }
+            }
+            else {
+                int decreased = strengths.getLast() - 10;
+                strengths.removeLast();
+                strengths.addLast(decreased);
+                accuracies.addLast(accuracies.getFirst());
+                accuracies.removeFirst();
+            }
+        }
+        if(countGoal == 3)
+        {
+            System.out.println("Paul scored a hat-trick!");
+        }
+        if(countGoal == 0)
+        {
+            System.out.println("Paul failed to score a single goal.");
+        }
+        if(countGoal > 3)
+        {
+            System.out.println("Paul performed remarkably well!");
+        }
+        if(countGoal > 0 && countGoal < 3)
+        {
+            System.out.println("Paul failed to make a hat-trick.");
+        }
+        if(countGoal > 0)
+        {
+            System.out.printf("Goals scored: %d%n", countGoal);
+        }
+        
+        if(!strengths.isEmpty())
+        {
+            List<String> strengthsList = modifyListOfIntToListOfString(strengths);
+            System.out.println("Strength values left: " + String.join(", ", strengthsList));
+        }
+        if(!accuracies.isEmpty())
+        {
+            List<String> accuraciesList = modifyListOfIntToListOfString(accuracies);
+            System.out.println("Accuracy values left: " + String.join(", ", accuraciesList));
+        }
+    }
+    public static LinkedList<Integer> modifyArrayListToLinkedList(List<Integer> list) {
+        LinkedList<Integer> result = new LinkedList<>();
+        for (Integer integer : list) {
+            result.add(integer);
+        }
+        return result;
+    }
+    public static List<String> modifyListOfIntToListOfString(LinkedList<Integer> list) {
+        List<String> result = new ArrayList<>();
+        for (Integer integer : list) {
+            result.add(String.valueOf(integer));
+        }
+        return result;
+
+    }
+
+}
