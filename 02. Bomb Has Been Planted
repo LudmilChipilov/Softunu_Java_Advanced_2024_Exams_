@@ -1,0 +1,135 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class _02_Bomb_Has_Been_Planted
+{
+    public static void main(String[] args)
+    {
+        Scanner scanner = new Scanner(System.in);
+        int[] sizes = Arrays.stream(scanner.nextLine().split(", ")).mapToInt(Integer::parseInt).toArray();
+        int rows = sizes[0];
+        int cols = sizes[1];
+        int currentRow = 0;
+        int currentCol = 0;
+        int counterSec = 16;
+        int totalTime = 0;
+        boolean isBomb = false;
+        String[][] matrix = new String[rows][cols];
+        for(int row = 0; row < rows; row++)
+        {
+            String input = scanner.nextLine();
+            matrix[row] = input.split("");
+            if(input.contains("C"))
+            {
+                currentRow = row;
+                currentCol = input.indexOf("C");
+            }
+        }
+        String command = scanner.nextLine();
+        while(!command.isEmpty())
+        {
+
+            int previousRow = currentRow;
+            int previousCol = currentCol;
+            //left", "right", "up", and "down" defuse
+
+            if(command.equals("defuse"))
+            {
+                if(!matrix[currentRow][currentCol].equals("B"))
+                {
+                    counterSec -= 2;
+                    totalTime += 2;
+                    if(counterSec <= 0)
+                    {
+                        System.out.println("Terrorists win!");
+                        System.out.println("Bomb was not defused successfully!");
+                        System.out.printf("Time needed: %d second/s.%n", totalTime - 16);
+                        printMatrix(matrix, rows, cols);
+                        return;
+                    }
+                    command = scanner.nextLine();
+                    continue;
+                }
+                else
+                {
+                    counterSec -= 4;
+                    totalTime += 4;
+                    if(counterSec >= 0)
+                    {
+                        matrix[currentRow][currentCol] = "D";
+                        System.out.println("Counter-terrorist wins!");
+                        System.out.printf("Bomb has been defused: %d second/s remaining.%n", counterSec);
+                        printMatrix(matrix, rows, cols);
+                        return;
+                    }
+                    else
+                    {
+                        matrix[currentRow][currentCol] = "X";
+                        System.out.println("Terrorists win!");
+                        System.out.println("Bomb was not defused successfully!");
+                        System.out.printf("Time needed: %d second/s.%n", totalTime - 16);
+                        printMatrix(matrix, rows, cols);
+                        return;
+                    }
+                }
+            }
+            if(counterSec <= 0)
+            {
+                System.out.println("Terrorists win!");
+                System.out.println("Bomb was not defused successfully!");
+                System.out.printf("Time needed: %d second/s.%n", totalTime - 16);
+                printMatrix(matrix, rows, cols);
+                return;
+            }
+            switch (command)
+            {
+                case "up" -> currentRow--;
+                case "down" -> currentRow++;
+                case "left" -> currentCol--;
+                case "right" -> currentCol++;
+            }
+            if(!command.equals("defuse"))
+            {
+                counterSec--;
+                totalTime++;
+                if(counterSec <= 0)
+                {
+                    System.out.println("Terrorists win!");
+                    System.out.println("Bomb was not defused successfully!");
+                    System.out.printf("Time needed: %d second/s.%n", totalTime - 16);
+                    printMatrix(matrix, rows, cols);
+                    return;
+                }
+
+            }
+
+            boolean isOutOfMatrix = currentRow < 0 || currentRow > rows - 1 || currentCol < 0 || currentCol > cols - 1;
+            if(isOutOfMatrix)
+            {
+                currentRow = previousRow;
+                currentCol = previousCol;
+                command = scanner.nextLine();
+                continue;
+            }
+            if(matrix[currentRow][currentCol].equals("T"))
+            {
+                matrix[currentRow][currentCol] = "*";
+                System.out.println("Terrorists win!");
+                printMatrix(matrix, rows, cols);
+                return;
+            }
+            command = scanner.nextLine();
+        }
+    }
+    public static void printMatrix(String[][] matrix, int rows, int cols)
+    {
+        for(int row = 0; row < rows; row++)
+        {
+            for(int col = 0; col < cols; col++)
+            {
+                System.out.print(matrix[row][col]);
+            }
+            System.out.println();
+        }
+    }
+}
